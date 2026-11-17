@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #fff6e8;
+  --color-cream-card: #fffdf8;
+  --color-ink: #2a2118;
+  --color-ink-soft: #4e453c;
+  --color-teal: #0e7c73;
+  --color-teal-deep: #085851;
+  --color-mint: #e5f6f2;
+  --color-coral: #d4534a;
+  --color-coral-soft: #ffe4dc;
+  --color-sun: #f0b429;
+  --color-sun-soft: #fff1c9;
+  --font-display: "Fredoka", "Noto Sans SC", "PingFang SC", sans-serif;
+  --font-logo: "ZCOOL KuaiLe", "Fredoka", "Noto Sans SC", sans-serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    background: #fff6e8;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    background:
+      radial-gradient(ellipse at 8% -10%, #ffe1c4 0%, transparent 42%),
+      radial-gradient(ellipse at 110% 0%, #d7f3ee 0%, transparent 40%),
+      radial-gradient(ellipse at 90% 110%, #ffe7a8aa 0%, transparent 36%),
+      var(--color-cream);
+  }
+
+  button,
+  a {
+    touch-action: manipulation;
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-teal);
+    outline-offset: 3px;
+  }
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 80;
+  border-radius: 999px;
+  background: white;
+  padding: 0.6rem 1rem;
+  font-family: var(--font-display);
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes hint-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 124, 115, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(14, 124, 115, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .float-soft {
+    animation: float-soft 3.6s ease-in-out infinite;
+  }
+
+  .pop-in {
+    animation: pop-in 0.35s ease-out;
+  }
+
+  .hint-pulse {
+    animation: hint-pulse 1.3s ease-in-out infinite;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .mascot-hero {
+    height: 7rem;
+    width: 7rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint-pulse {
+    outline: 4px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
