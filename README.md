@@ -24,10 +24,13 @@ npm run dev
 其他命令：
 
 ```bash
-npm run build      # 类型检查并生成 dist/
-npm run preview    # 预览构建结果，仍是本机，不是正式部署
+npm run build      # 类型检查并生成 dist/（默认根路径）
+npm run build:pages # 按 /bunny-english/ 构建，并检查资源前缀
+npm run preview    # 预览根路径构建结果，仍是本机，不是正式部署
+npm run preview:pages # 预览 GitHub Pages 子路径构建
 npm run lint       # oxlint
 npm run test:e2e   # Playwright 冒烟测试（会自己启动开发服务）
+npm run test:pages # 子路径生产冒烟：脚本、样式、manifest、图标、Service Worker
 npm run icons      # 用 public/favicon.svg 重新生成 PWA 图标
 ```
 
@@ -60,7 +63,7 @@ npx playwright install chromium
 - **英语朗读**用的是浏览器 `speechSynthesis`，优先 `en-US`。没有自带的真人录音，也没有付费语音接口。有的手机、电脑或无头浏览器读不到英语语音，甚至完全没有 `speechSynthesis`。这时仍然可以看图和单词；听一听会把英语单词显示出来，而不是假装听到了声音。
 - **录音**用 `MediaRecorder` 和 `getUserMedia`。音频只做成页面内存里的 blob，用来本地回放，不上传、不写入 localStorage。拒绝权限、没有麦克风、或页面不是 HTTPS/localhost 时，会说明原因，听示范仍然可用。
 - **词语对照**默认关闭。家长打开后，孩子再点一次按钮，才会使用浏览器的 `SpeechRecognition`。它只检查识别出的文字里有没有目标单词，**不是发音评分**，不显示分数。部分浏览器会把这段短音频发给系统或浏览器厂商的服务器。本应用没有自己的服务器，不会另外保存这段声音。
-- **离线**：生产构建会注册一个很简单的 Service Worker，缓存访问过的同源文件，方便下次打开页面。它不能离线提供英语语音，也不能代替麦克风所需的安全连接。开发预览不注册 Service Worker。
+- **离线**：生产构建会注册一个很简单的 Service Worker，只缓存它所在目录里访问过的同源文件（根路径或 `/bunny-english/`）。它不能离线提供英语语音，也不能代替麦克风所需的安全连接。开发预览不注册 Service Worker。
 - **安装**：`manifest.webmanifest` 只提供「添加到主屏幕」这类浏览器能力，不是应用商店，也不保证安装后离线可用。
 
 ## 架构
@@ -81,14 +84,19 @@ npx playwright install chromium
 
 ## 部署
 
+`APP_BASE` 决定打包前缀，默认是 `/`。GitHub Pages 项目站点用 `/bunny-english/`。以后放到域名根路径（例如 Cloudflare）时不要设置 `APP_BASE`，同一套路径逻辑仍然成立。路由继续用 hash，静态托管不需要服务器回退。
+
 ```bash
 npm install
 npm run build
+APP_BASE=/bunny-english/ npm run build
 ```
 
-把 `dist/` 上传到任何静态托管，站点放在域名根路径。如果要放在子路径，改 `vite.config.ts` 的 `base`，并同步 manifest 的 `start_url`。
+`npm run build:pages` 就是带 `/bunny-english/` 的构建，并检查 `dist/` 里的脚本、样式、manifest（`start_url`、`scope`、图标）和 Service Worker 注册地址都在这个前缀下。Service Worker 按自己的地址缓存，不会把子路径资源写到网站根上。
 
-麦克风和部分语音识别需要 HTTPS。localhost 上的 `npm run preview` 可以试麦克风，但那仍然只是你自己电脑上的预览。
+推送到 `main`，或在 Actions 里手动运行 “Deploy GitHub Pages”，会构建 `dist/` 并发布到 GitHub Pages。工作流不修改仓库可见性，也不改 Pages 的账号设置。不需要密钥。
+
+麦克风和部分语音识别需要 HTTPS。`github.io` 是 HTTPS。localhost 上的 `npm run preview` 可以试麦克风，但那仍然只是你自己电脑上的预览。
 
 ## 测试
 
@@ -107,9 +115,19 @@ npm run test:e2e
 npx tsc -b --pretty false
 # exit 0
 
+npm run lint
+# exit 0（src/state/store.tsx 仍有一条 fast-refresh 警告）
+
+npm run build && node scripts/verify-pages-base.mjs dist /
+# base paths ok: /
+
 npm run test:e2e
 # Running 17 tests using 2 workers
-# 17 passed (15.3s)
+# 17 passed (14.4s)
+
+npm run test:pages
+# Running 2 tests using 1 worker
+# 2 passed (5.2s)
 ```
 
 代表性截图在运行测试时写到本机的 `/opt/cursor/artifacts/`（home、learn、listen、match、speak、parent、tts fallback）。
@@ -122,5 +140,5 @@ npm run test:e2e
 - 词语对照不是口腔动作或音素评分。不要把它当成发音打分。
 - 录音在刷新、关闭页面或离开读一读时会丢掉。
 - 进度不能换设备同步。清站点数据会丢掉星星。
-- Service Worker 只在生产构建注册。离线时如果缓存里没有页面，仍然打不开。
+- Service Worker 只在生产构建注册，缓存范围跟着 `APP_BASE`。离线时如果缓存里没有页面，仍然打不开。
 - 小课堂和听一听的题目顺序是随机的，方便重复玩。
