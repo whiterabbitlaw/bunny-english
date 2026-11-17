@@ -22,8 +22,9 @@ createRoot(root).render(
 )
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  const base = import.meta.env.BASE_URL
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
+    navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => {
       // Install support is optional. The lessons still run without a service worker.
     })
   })

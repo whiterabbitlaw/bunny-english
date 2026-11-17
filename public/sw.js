@@ -1,4 +1,6 @@
-/* Optional app-shell cache. This does not provide offline English voices or a microphone. */
+/* Optional app-shell cache. This does not provide offline English voices or a microphone.
+   Cached URLs follow the script location (/ or /bunny-english/), not a hardcoded site root. */
+const BASE_PATH = new URL('./', self.location).pathname
 const CACHE = 'bunny-english-shell-v1'
 
 self.addEventListener('install', (event) => {
@@ -18,7 +20,7 @@ self.addEventListener('fetch', (event) => {
   const request = event.request
   if (request.method !== 'GET') return
   const url = new URL(request.url)
-  if (url.origin !== self.location.origin) return
+  if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE_PATH)) return
   event.respondWith(
     fetch(request)
       .then((response) => {
