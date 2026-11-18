@@ -1,0 +1,33 @@
+<view class="wrap">
+  <view class="h1">{{status === 'published' ? '已发布，不能再改' : '编辑作业'}}</view>
+  <view class="hint">每个内容一块：一张图片，一段或多段示范音频。先预览，再发布。从聊天选音频只能选会话里的文件，不能浏览手机文件夹。</view>
+  <input placeholder="作业标题" value="{{title}}" bindinput="onTitle" disabled="{{status === 'published'}}" />
+
+  <view class="card" wx:for="{{blocks}}" wx:for-index="blockIndex" wx:key="id">
+    <input placeholder="这一块的标题" value="{{item.title}}" data-index="{{blockIndex}}" bindinput="onBlockTitle" />
+    <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="widthFix" style="width: 100%;" />
+    <button data-index="{{blockIndex}}" bindtap="chooseImage">从相册选图片</button>
+    <view wx:for="{{item.audios}}" wx:for-item="audio" wx:for-index="audioIndex" wx:key="id">
+      <input placeholder="这句话或字母，例如 It's a pencil." value="{{audio.label}}" data-index="{{blockIndex}}" data-audio="{{audioIndex}}" bindinput="onAudioLabel" />
+    </view>
+    <button data-index="{{blockIndex}}" bindtap="chooseAudio">从聊天选音频</button>
+    <button data-index="{{blockIndex}}" bindtap="startReference">录一段示范</button>
+    <button wx:if="{{recordingBlock === blockIndex}}" bindtap="stopReference">停止</button>
+    <button wx:if="{{item.pending}}" data-index="{{blockIndex}}" data-path="{{item.pending.path}}" bindtap="playLocal">先听一遍</button>
+    <button wx:if="{{item.pending}}" data-index="{{blockIndex}}" bindtap="useTake">使用这段示范</button>
+    <view class="row">
+      <button data-index="{{blockIndex}}" data-dir="-1" bindtap="moveBlock">上移</button>
+      <button data-index="{{blockIndex}}" data-dir="1" bindtap="moveBlock">下移</button>
+    </view>
+  </view>
+
+  <button wx:if="{{status !== 'published'}}" bindtap="addBlock">加一块</button>
+  <button wx:if="{{status !== 'published'}}" bindtap="saveDraft">保存草稿</button>
+  <button wx:if="{{status !== 'published'}}" bindtap="openPreview">预览</button>
+
+  <view class="banner" wx:if="{{preview}}">
+    这是发布前预览。小朋友还看不到。确认后才会发布。
+    <view wx:for="{{blocks}}" wx:key="id">{{item.title}} · 音频 {{item.audios.length}} 段</view>
+    <button bindtap="publish">发布给小朋友</button>
+  </view>
+</view>

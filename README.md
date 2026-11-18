@@ -82,6 +82,10 @@ npx playwright install chromium
 
 存在本机的只有星星、听过的词 id、游戏次数、家长设置和本次打开的时间。录音不进 localStorage。词语对照若被家长打开，音频是否离开设备取决于那台浏览器的语音识别实现，不取决于本仓库的服务器——因为没有服务器。
 
+## 微信作业小程序
+
+幼儿园作业在 `wechat/`，和这个网页分开。老师上传图片和示范音频，家长看图听音频后交两段录音。网页的 GitHub Pages 不因此改变。配置、安全规则和真机清单见 [wechat/README.md](wechat/README.md)。仓库里不放 AppID、云环境 ID 或老师名单。
+
 ## 部署
 
 `APP_BASE` 决定打包前缀，默认是 `/`。GitHub Pages 项目站点用 `/bunny-english/`。以后放到域名根路径（例如 Cloudflare）时不要设置 `APP_BASE`，同一套路径逻辑仍然成立。路由继续用 hash，静态托管不需要服务器回退。
@@ -105,6 +109,7 @@ APP_BASE=/bunny-english/ npm run build
 ```bash
 npx tsc -b --pretty false
 npm run test:e2e
+npm run test:homework
 ```
 
 `npm run test:e2e` 使用 Playwright Chromium，启动 `http://127.0.0.1:43123`。覆盖首页和四个世界的导航、听一听答错/答对、星星刷新后还在、配对答错与重新洗牌、家长按住进入、声音/休息/词语对照开关、清空前取消与确认、休息提醒可关掉、麦克风不支持/非安全连接/拒绝权限、本地录音 blob 回放、没有 speechSynthesis 时的文字替代，以及家长开启后的词语对照（对上与没对上，且没有分数）。
@@ -129,6 +134,8 @@ npm run test:pages
 # Running 2 tests using 1 worker
 # 2 passed (5.2s)
 ```
+
+2026-11-18 又跑过网页和作业测试：`npm run test:e2e` 17 passed，`npm run test:pages` 2 passed，`npm run test:homework` 9 passed。作业测试不连接云开发。
 
 代表性截图在运行测试时写到本机的 `/opt/cursor/artifacts/`（home、learn、listen、match、speak、parent、tts fallback）。
 

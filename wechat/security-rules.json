@@ -1,0 +1,16 @@
+{
+  "note": "Paste these into the CloudBase console. They are not applied by this repository. Cloud functions are the admin side and bypass client rules, so the function must do its own checks.",
+  "database": {
+    "children": { "read": false, "write": false },
+    "assignments": { "read": false, "write": false },
+    "submissions": { "read": false, "write": false },
+    "files": { "read": false, "write": false }
+  },
+  "storage": {
+    "read": false,
+    "write": "auth.openid == resource.openid"
+  },
+  "functionInvoke": {
+    "*": { "invoke": "auth != null" }
+  }
+}

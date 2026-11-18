@@ -1,0 +1,6 @@
+{
+  "name": "bunny-english-wechat",
+  "private": true,
+  "type": "commonjs",
+  "description": "Marks the WeChat mini program tree as CommonJS. Not a published package."
+}

@@ -1,0 +1,77 @@
+page {
+  background: #fff6e8;
+  color: #24312f;
+  font-size: 32rpx;
+  line-height: 1.5;
+}
+
+.wrap {
+  padding: 32rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 28rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.h1 {
+  font-size: 44rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.note, .hint {
+  color: #5d6d6a;
+  font-size: 28rpx;
+}
+
+.banner {
+  background: #ffe8c2;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+button {
+  margin: 16rpx 0 0;
+}
+
+.row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.row button {
+  flex: 1;
+}
+
+input, .field {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 16rpx 20rpx;
+  margin-top: 12rpx;
+}
+
+.art {
+  height: 220rpx;
+  border-radius: 24rpx;
+  background: #fff8ee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28rpx;
+  margin: 12rpx 0 20rpx;
+}
+
+.pencil, .eraser, .scissors, .letter {
+  width: 72rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+}
+
+.pencil { background: #ffd15c; border-bottom: 28rpx solid #f2a3b5; }
+.eraser { width: 90rpx; height: 64rpx; background: #ffb7c8; border-radius: 16rpx; }
+.scissors { width: 80rpx; height: 80rpx; background: radial-gradient(circle at 30% 30%, #67c7c1 18rpx, transparent 20rpx), radial-gradient(circle at 70% 30%, #67c7c1 18rpx, transparent 20rpx), linear-gradient(45deg, transparent 42%, #24312f 42%, #24312f 58%, transparent 58%); }
+.letter { width: auto; font-size: 48rpx; font-weight: 700; color: #0e7c73; background: transparent; }

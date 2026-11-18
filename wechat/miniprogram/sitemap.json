@@ -1,0 +1,4 @@
+{
+  "desc": "作业页不进入索引",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}
