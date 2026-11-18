@@ -1,0 +1,9 @@
+<view class="wrap">
+  <view class="h1">{{title}}</view>
+  <view class="hint">这里只显示你名下小朋友的提交。录音链接是短时的，页面不保存成公开地址。</view>
+  <view class="card" wx:for="{{children}}" wx:key="childId">
+    <view>{{item.displayName}} · {{item.bound ? '' : '未绑定 · '}}{{item.status === 'submitted' ? '已提交' : item.status === 'draft' ? '录音了还没提交' : '未提交'}}</view>
+    <button wx:if="{{item.sentencesUrl}}" data-url="{{item.sentencesUrl}}" bindtap="play">听句子</button>
+    <button wx:if="{{item.lettersUrl}}" data-url="{{item.lettersUrl}}" bindtap="play">听字母</button>
+  </view>
+</view>

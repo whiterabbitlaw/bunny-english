@@ -17,6 +17,11 @@ playwright-report
 blob-report
 playwright/.cache
 
+# WeChat developer tools
+wechat/cloudfunctions/**/node_modules/
+wechat/**/miniprogram_npm/
+wechat/project.private.config.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

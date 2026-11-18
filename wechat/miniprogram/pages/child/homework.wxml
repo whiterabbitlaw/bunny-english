@@ -1,0 +1,57 @@
+<view class="wrap">
+  <view class="banner" wx:if="{{configNeeded}}">需要先填写 AppID 和云环境 ID。示例不会上传。</view>
+  <view class="banner" wx:if="{{demo}}">{{assignment.notice}}</view>
+  <view class="banner" wx:if="{{preview}}">老师预览。还没发布，不能录音，也不能提交。</view>
+
+  <view wx:if="{{assignments.length}}">
+    <view class="h1">选择作业</view>
+    <view class="card" wx:for="{{assignments}}" wx:key="id" data-id="{{item.id}}" bindtap="openListed">{{item.title}}</view>
+  </view>
+
+  <block wx:if="{{assignment}}">
+    <view class="h1">{{assignment.title}}</view>
+    <picker wx:if="{{children.length > 1}}" mode="selector" range="{{children}}" range-key="displayName" bindchange="pickChild">
+      <view class="card">当前小朋友：点此切换</view>
+    </picker>
+
+    <view class="card" wx:for="{{assignment.blocks}}" wx:key="id">
+      <view>{{item.title}}</view>
+      <image wx:if="{{item.imageUrl}}" src="{{item.imageUrl}}" mode="widthFix" style="width: 100%;" />
+      <view class="art" wx:elif="{{item.art === 'stationery'}}">
+        <view class="pencil"></view>
+        <view class="eraser"></view>
+        <view class="scissors"></view>
+      </view>
+      <view class="art" wx:elif="{{item.art === 'letters'}}">
+        <view class="letter">Ll</view>
+        <view class="letter">Mm</view>
+        <view class="letter">Nn</view>
+        <view class="letter">Oo</view>
+      </view>
+      <view wx:for="{{item.audios}}" wx:for-item="audio" wx:key="id">
+        <button data-url="{{audio.url}}" data-unavailable="{{audio.unavailable || demo}}" bindtap="play">{{audio.label}}</button>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{!preview}}">
+      <view class="h1">交作业</view>
+      <view class="hint">录两段就行：句子一段，字母一段。不是每个词都要单独交。</view>
+      <view>句子：{{sentences.phase === 'locked' ? '已提交' : sentences.phase === 'saved' ? '已保存' : sentences.phase === 'preview' ? '可以先听' : sentences.phase === 'recording' ? '正在录' : '还没录'}}</view>
+      <button data-section="sentences" bindtap="startSection" disabled="{{demo || submitted || sentences.phase === 'recording' || sentences.phase === 'preview'}}">录句子</button>
+      <button wx:if="{{sentences.phase === 'recording'}}" bindtap="stopSection">停止</button>
+      <button wx:if="{{sentencesPending}}" data-path="{{sentencesPending.path}}" bindtap="play">先听句子</button>
+      <button wx:if="{{sentences.phase === 'preview'}}" data-section="sentences" bindtap="useTake">保存句子</button>
+      <button wx:if="{{sentences.phase === 'saved' || sentences.phase === 'preview'}}" data-section="sentences" bindtap="rerecord" disabled="{{submitted}}">重录句子</button>
+
+      <view>字母：{{letters.phase === 'locked' ? '已提交' : letters.phase === 'saved' ? '已保存' : letters.phase === 'preview' ? '可以先听' : letters.phase === 'recording' ? '正在录' : '还没录'}}</view>
+      <button data-section="letters" bindtap="startSection" disabled="{{demo || submitted || letters.phase === 'recording' || letters.phase === 'preview'}}">录字母</button>
+      <button wx:if="{{letters.phase === 'recording'}}" bindtap="stopSection">停止</button>
+      <button wx:if="{{lettersPending}}" data-path="{{lettersPending.path}}" bindtap="play">先听字母</button>
+      <button wx:if="{{letters.phase === 'preview'}}" data-section="letters" bindtap="useTake">保存字母</button>
+      <button wx:if="{{letters.phase === 'saved' || letters.phase === 'preview'}}" data-section="letters" bindtap="rerecord" disabled="{{submitted}}">重录字母</button>
+
+      <view class="hint" data-consent="1" bindtap="toggleConsent">{{consent ? '已勾选' : '未勾选'}}：我是家长或监护人，同意把这两段录音交给老师。录音不公开。</view>
+      <button bindtap="submit" disabled="{{demo || submitted || !consent}}">提交作业</button>
+    </view>
+  </block>
+</view>

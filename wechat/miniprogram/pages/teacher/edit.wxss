@@ -1,0 +1,4 @@
+image {
+  border-radius: 20rpx;
+  margin-top: 12rpx;
+}

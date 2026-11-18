@@ -1,0 +1,40 @@
+<view class="wrap">
+  <view class="h1">兔兔作业</view>
+  <view class="note">老师发图片和示范音频。小朋友看图、听音频，再交两段录音。</view>
+
+  <view class="banner" wx:if="{{configNeeded}}">
+    还没有配置。请在 miniprogram/config.js 填写小程序 AppID 和云环境 ID，并在 project.config.json 填写同一个 AppID。这里不会假装已经上传。
+    <button bindtap="openSample">查看本地示例</button>
+  </view>
+
+  <block wx:if="{{!configNeeded && openid}}">
+    <view class="card">
+      <view>我的身份：{{role === 'teacher' ? '老师' : role === 'guardian' ? '已绑定的家长' : '还没有老师或小朋友权限'}}</view>
+      <view class="hint">OPENID 只属于这个微信。把它填进云函数环境变量 TEACHER_OPENIDS 后才会成为老师，小程序里没有“我当老师”按钮。</view>
+      <button bindtap="copyOpenid">复制我的 OPENID</button>
+    </view>
+
+    <view class="card" wx:if="{{role === 'teacher'}}">
+      <view class="h1">小朋友</view>
+      <view wx:for="{{children}}" wx:key="id">
+        <view>{{item.displayName}} · {{item.bound ? '已绑定' : '未绑定'}}</view>
+        <button wx:if="{{!item.bound}}" data-id="{{item.id}}" data-name="{{item.displayName}}" bindtap="rotateInvite">重新生成邀请</button>
+        <button wx:if="{{item.bound}}" data-id="{{item.id}}" bindtap="unbind">解除绑定</button>
+      </view>
+      <input placeholder="小朋友的称呼，只是显示用" value="{{childName}}" bindinput="onName" />
+      <button bindtap="createChild">生成邀请</button>
+      <view class="banner" wx:if="{{shareToken}}">邀请只显示这一次。请立刻发给家长。离开页面后不能再查看，只能在未绑定时重新生成。</view>
+      <button wx:if="{{shareToken}}" open-type="share">发给家长</button>
+      <button bindtap="newAssignment">新建作业</button>
+      <view wx:for="{{assignments}}" wx:key="id" data-id="{{item.id}}" data-status="{{item.status}}" bindtap="openAssignment">
+        {{item.title}} · {{item.status === 'published' ? '已发布' : '草稿'}}
+      </view>
+    </view>
+
+    <view class="card" wx:else>
+      <view wx:if="{{assignments.length === 0}}" class="hint">用老师发来的邀请打开。名字和学号不能登录。</view>
+      <view wx:for="{{assignments}}" wx:key="id" data-id="{{item.id}}" bindtap="openHomework">{{item.title}}</view>
+      <button bindtap="openSample">查看本地示例</button>
+    </view>
+  </block>
+</view>
